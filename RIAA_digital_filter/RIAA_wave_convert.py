@@ -1,27 +1,27 @@
 import sys
-import time
 from datetime import datetime
+from datetime import timedelta
 
 from RIAA_digital_filter.riaa_classes import InOutStream, RiaaFilter
 
 if __name__== "__main__":
     a=len(sys.argv)
     match a:
-        case 0:
+        case 1:
             print('USAGE : python command.py Filename [ku] [path]')
             sys.exit("no filename passed")
-        case 1:
-            fn = sys.argv[1]
-            io_stream = InOutStream(fn)
         case 2:
             fn = sys.argv[1]
-            ku = float(sys.argv[2])
-            io_stream = InOutStream(fn, ku)
+            io_stream = InOutStream(fn)
         case 3:
             fn = sys.argv[1]
             ku = float(sys.argv[2])
+            io_stream = InOutStream(fn, ku)
+        case 4:
+            fn = sys.argv[1]
+            ku = float(sys.argv[2])
             path = sys.argv[3]
-            io_stream = InOutStream(fn, ku, path)
+            io_stream = InOutStream(fn, ku, path+'\\')
         case _:
             print('USAGE : python command.py Filename [ku] [path]')
             sys.exit("wrong parameters")
@@ -31,7 +31,7 @@ print("Начинаем обработку файла:  ", io_stream.src_file)
 print("частота дискретизации   :  ", io_stream.framerate/1000)
 print("Разрядность             :  ", io_stream.params.sampwidth*8)
 print("Количество каналов      :  ", io_stream.params.nchannels)
-print("Длительность            :  ", time.strftime("%H:%M:%S", io_stream.params.nframes/io_stream.framerate))
+print("Длительность            :  ", timedelta(seconds =  io_stream.params.nframes/io_stream.framerate))
 
 left = RiaaFilter(io_stream.framerate)
 right = RiaaFilter(io_stream.framerate)
