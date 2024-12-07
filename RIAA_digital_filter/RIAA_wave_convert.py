@@ -27,11 +27,11 @@ if __name__== "__main__":
             sys.exit("wrong parameters")
 
 
-print("Начинаем обработку файла:  ", io_stream.src_file)
-print("частота дискретизации   :  ", io_stream.framerate/1000)
-print("Разрядность             :  ", io_stream.params.sampwidth*8)
-print("Количество каналов      :  ", io_stream.params.nchannels)
-print("Длительность            :  ", timedelta(seconds =  io_stream.params.nframes/io_stream.framerate))
+print("Начинаем обработку файла:   ", io_stream.src_file)
+print("частота дискретизации   :   ", io_stream.framerate/1000)
+print("Разрядность             :   ", io_stream.params.sampwidth*8)
+print("Количество каналов      :   ", io_stream.params.nchannels)
+print("Длительность            :   ", timedelta(seconds =  io_stream.params.nframes/io_stream.framerate))
 
 left = RiaaFilter(io_stream.framerate)
 right = RiaaFilter(io_stream.framerate)

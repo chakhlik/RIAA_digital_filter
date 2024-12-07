@@ -1,6 +1,9 @@
 import wave
 import math
 
+#open files to read and write data
+#output filename same as input + '-SDF'
+#framerate and nchannels derived from input file
 class InOutStream:
     name_append="-SDF"
     framerate=1
@@ -35,6 +38,7 @@ class InOutStream:
         buf_out = b''.join(b)
         self.dest.writeframesraw(buf_out)
 
+#general digital filter
 class DigitalFilter:
 
     def __init__(self, b0, b1, b2, a1, a2):
@@ -49,6 +53,7 @@ class DigitalFilter:
         self.samples.insert(3, y)
         return y
 
+#digital filter with RIAA response (1 or 2 channels)
 class RiaaFilter:
     # main RIAA constants
     tau_318 = 318e-6
