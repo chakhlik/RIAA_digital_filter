@@ -8,7 +8,7 @@ if __name__== "__main__":
     a=len(sys.argv)
     match a:
         case 1:
-            print('USAGE : python command.py Filename [ku] [path]')
+            print('USAGE : python command.py filename [ku] [path]')
             sys.exit("no filename passed")
         case 2:
             fn = sys.argv[1]
@@ -23,7 +23,7 @@ if __name__== "__main__":
             path = sys.argv[3]
             io_stream = InOutStream(fn, ku, path+'\\')
         case _:
-            print('USAGE : python command.py Filename [ku] [path]')
+            print('USAGE : python command.py filename [ku] [path]')
             sys.exit("wrong parameters")
 
 
