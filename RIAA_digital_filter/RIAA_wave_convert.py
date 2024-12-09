@@ -1,3 +1,4 @@
+import math
 import sys
 from datetime import datetime
 from datetime import timedelta
@@ -49,4 +50,7 @@ for i in range(0, io_stream.params.nframes):
 
 io_stream.close_all()
 print("Finished")
-
+print("Left peak level     :  %f.2 dB" % (20 * math.log10(io_stream.left_peak/io_stream.level_0db)))
+print("Right peak level    :  %f.2 dB" % (20 * math.log10(io_stream.right_peak/io_stream.level_0db)))
+print("Left RMS level      :  %f.2 dB" % (20 * math.log10(math.sqrt(io_stream.left_rms/io_stream.params.nframes)/io_stream.level_0db)))
+print("Right RMS level     :  %f.2 dB" % (20 * math.log10(math.sqrt(io_stream.right_rms/io_stream.params.nframes)/io_stream.level_0db)))

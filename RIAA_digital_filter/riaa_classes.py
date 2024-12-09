@@ -7,6 +7,11 @@ import math
 class InOutStream:
     name_append="-SDF"
     framerate=1
+    left_peak=0.0
+    left_rms=0.0
+    right_peak=0.0
+    right_rms=0.0
+    level_0db=0
 
     def __init__(self, filename, ku=16.0, path=""):
         self.src_file=path+filename
@@ -17,6 +22,7 @@ class InOutStream:
         self.dest.setparams(self.params)
         self.framerate=self.params.framerate
         self.ku=ku
+        self.level_0db=2**(8*self.params.sampwidth-1)
 
     def close_all(self):
         self.src.close()
@@ -32,11 +38,16 @@ class InOutStream:
 
     def put_readout(self, *args):
         b=[]
-        b.append(int(round(args[0] * self.ku, 0)).to_bytes(4, 'little', signed=True)[0:3])
+        b.append(int(round(args[0] * self.ku, 0)).to_bytes(4, 'little', signed=True)[0:self.params.sampwidth])
+        self.left_peak = max(self.left_peak, abs(args[0] * self.ku))
+        self.left_rms += (args[0] * self.ku)**2
         if self.params.nchannels == 2:
-            b.append(int(round(args[1] * self.ku, 0)).to_bytes(4, 'little', signed=True)[0:3])
+            b.append(int(round(args[1] * self.ku, 0)).to_bytes(4, 'little', signed=True)[0:self.params.sampwidth])
+            self.right_peak = max(self.right_peak, abs(args[1] * self.ku))
+            self.right_rms += (args[1] * self.ku) ** 2
         buf_out = b''.join(b)
         self.dest.writeframesraw(buf_out)
+
 
 #general digital filter
 class DigitalFilter:
