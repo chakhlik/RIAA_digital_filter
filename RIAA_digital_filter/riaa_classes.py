@@ -1,6 +1,7 @@
 import numpy as np
 import wave
 import math
+from scipy.signal import lfilter
 
 
 #open files to read and write data
@@ -106,19 +107,26 @@ class RiaaFilter:
         b0 = (1.0 + beta_1) / (1.0 + alfa_1 + alfa_2)
         b1 = 1.0 / (1.0 + alfa_1 + alfa_2)
         b2 = -1.0 * beta_1 / (1.0 + alfa_1 + alfa_2)
-        a1 = -1.0 / (1.0 + alfa_1 + alfa_2)  # changed sign
-        a2 = 1.0 * (alfa_1 + alfa_2) / (1 + alfa_1 + alfa_2)  # changed sign
+        a1 = 1.0 / (1.0 + alfa_1 + alfa_2)  # changed sign
+        a2 = -1.0 * (alfa_1 + alfa_2) / (1 + alfa_1 + alfa_2)  # changed sign
+        self.b_low = np.array([b0, b1, b2])
+        self.a_low = np.array([1.0, a1, a2])
+
         # coefs for 2000 - 22000 Hz part
         f_tau_75 = 1.0 / (2.0 * math.pi * self.tau_75)
         k = math.tan(math.pi * f_tau_75 * t_sample)
         b = k / (k + 1.0)
-        a = -1.0 * (k - 1.0) / (k + 1.0)  # changed sign
-        self.riaa_low = DigitalFilter(b0, b1, b2, a1, a2)
-        self.riaa_high = DigitalFilter(b, b, 0, a, 0)
+        a = 1.0 * (k - 1.0) / (k + 1.0)  # changed sign
+        self.b_high = np.array([b, b, 0])
+        self.a_high = np.array([1.0, a, 0])
+
+        self.zi_low = np.zeros(len(self.a_low) - 1)
+        self.zi_high = np.zeros(len(self.a_high) - 1)
 
 
     def process(self, x):
-        #with self.lock:  # Блокируем доступ, чтобы избежать параллельной обработки
-        y1 = self.riaa_low.process(x)
-        y2 = self.riaa_high.process(y1)
-        return y2
+        # Сначала пропускаем через НЧ-фильтр
+        y, self.zi_low = lfilter(self.b_low, self.a_low, x, zi=self.zi_low)
+        # Потом через ВЧ-фильтр
+        y, self.zi_high = lfilter(self.b_high, self.a_high, y, zi=self.zi_high)
+        return y

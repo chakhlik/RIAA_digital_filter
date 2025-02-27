@@ -35,9 +35,9 @@ while True:
         break
 
     processed = np.zeros_like(samples)
-    processed[:, 0] = list(map(left_filter.process, samples[:, 0]))
+    processed[:, 0] = left_filter.process(samples[:, 0])
     if right_filter:
-        processed[:, 1] = list(map(right_filter.process, samples[:, 1]))
+        processed[:, 1] = right_filter.process(samples[:, 1])
 
     io_stream.put_readout(processed)
 
