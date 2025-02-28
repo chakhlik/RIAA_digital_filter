@@ -12,7 +12,7 @@ class InOutStream:
     framerate=1
     level_0db=1
 
-    def __init__(self, filename, ku=16.0, path="", buffer_size=8192):
+    def __init__(self, filename, ku=16.0, path="", buffer_size=65536):
         self.src_file=path+filename
         self.dest_file=path+filename[0:-4]+self.name_append+".wav"
         self.src=wave.open(self.src_file, mode="r")
