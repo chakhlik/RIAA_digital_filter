@@ -41,9 +41,9 @@ class InOutStream:
             samples = samples.astype(np.float32)
         else:
             dtype = np.dtype(f'int{sampwidth * 8}').newbyteorder('<')
-            samples = np.frombuffer(buf, dtype=dtype).astype(np.float32)
+            samples = np.frombuffer(buf, dtype=dtype).astype(np.float64)
 
-        return samples.reshape(-1, self.params.nchannels)
+        return samples.reshape(-1, self.params.nchannels).astype(np.float64)
 
     def put_readout(self, processed_samples):
         sampwidth = self.params.sampwidth

@@ -37,7 +37,7 @@ while True:
     if samples.size == 0:
         break
 
-    processed = np.zeros_like(samples)
+    processed = np.zeros_like(samples, dtype=np.float64)
     processed[:, 0] = left_filter.process(samples[:, 0])
     if right_filter:
         processed[:, 1] = right_filter.process(samples[:, 1])
@@ -55,3 +55,4 @@ print("Left peak level     :  %f.2 dB" % (20 * math.log10(io_stream.ku*left_filt
 print("Right peak level    :  %f.2 dB" % (20 * math.log10(io_stream.ku*right_filter.peak_level/io_stream.level_0db)))
 print("Left RMS level      :  %f.2 dB" % (20 * math.log10(io_stream.ku*math.sqrt(left_filter.rms_level/io_stream.params.nframes)/io_stream.level_0db)))
 print("Right RMS level     :  %f.2 dB" % (20 * math.log10(io_stream.ku*math.sqrt(right_filter.rms_level/io_stream.params.nframes)/io_stream.level_0db)))
+
