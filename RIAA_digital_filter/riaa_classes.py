@@ -10,10 +10,6 @@ from scipy.signal import lfilter
 class InOutStream:
     name_append="-SDF"
     framerate=1
-    left_peak=1.0
-    left_rms=1.0
-    right_peak=1.0
-    right_rms=1.0
     level_0db=1
 
     def __init__(self, filename, ku=16.0, path="", buffer_size=8192):
@@ -111,6 +107,8 @@ class RiaaFilter:
         a2 = -1.0 * (alfa_1 + alfa_2) / (1 + alfa_1 + alfa_2)  # changed sign
         self.b_low = np.array([b0, b1, b2])
         self.a_low = np.array([1.0, a1, a2])
+        self.peak_level=0
+        self.rms_level=0
 
         # coefs for 2000 - 22000 Hz part
         f_tau_75 = 1.0 / (2.0 * math.pi * self.tau_75)
@@ -129,4 +127,6 @@ class RiaaFilter:
         y, self.zi_low = lfilter(self.b_low, self.a_low, x, zi=self.zi_low)
         # Потом через ВЧ-фильтр
         y, self.zi_high = lfilter(self.b_high, self.a_high, y, zi=self.zi_high)
+        self.peak_level = max(np.max(np.abs(y)), self.peak_level)
+        self.rms_level += np.sum((y)**2)
         return y
